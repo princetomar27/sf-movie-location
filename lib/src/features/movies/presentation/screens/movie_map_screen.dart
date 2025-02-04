@@ -13,39 +13,6 @@ class MovieMapScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('SF Movie Locations')),
       body: Column(
         children: [
-          // Search bar to filter locations
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: BlocBuilder<MovieLocationCubit, MovieLocationState>(
-              builder: (context, state) {
-                final movieLocationCubit = context.read<MovieLocationCubit>();
-                return TextFormField(
-                  controller: movieLocationCubit.searchController,
-                  focusNode: movieLocationCubit.focusNode,
-                  decoration: InputDecoration(
-                    hintText: "Search movie locations...",
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        movieLocationCubit.clearSearchField();
-                      },
-                      child: Icon(
-                        Icons.close,
-                        color: movieLocationCubit.suffixIconColor,
-                      ),
-                    ),
-                  ),
-                  onChanged: (movie) {
-                    movieLocationCubit.filterMovies();
-                  },
-                );
-              },
-            ),
-          ),
-
-          // Google Map to display locations and markers
           Expanded(
             child: BlocBuilder<MovieLocationCubit, MovieLocationState>(
               builder: (context, state) {
@@ -68,10 +35,7 @@ class MovieMapScreen extends StatelessWidget {
                       initialCameraPosition:
                           CameraPosition(target: _sfCenter, zoom: 12),
                       onMapCreated: movieLocationCubit.onMapCreated,
-                      markers: loadedState.markers, // Display filtered markers
-                      onCameraMove: (position) {
-                        // Optional: Handle camera movement if needed.
-                      },
+                      markers: loadedState.markers,
                     );
                   default:
                     return Container();
