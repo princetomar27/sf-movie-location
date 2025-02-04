@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:sfmovie/src/core/errors/failures.dart';
+
+import '../../../../core/errors/failures.dart';
 import '../../domain/entities/movie_location.dart';
 import '../../domain/repositories/movie_repository.dart';
 import '../datasource/movie_remote_data_source.dart';
@@ -20,6 +21,7 @@ class MovieRepositoryImpl implements MovieRepository {
               (model) => MovieLocation(
                 title: model.title,
                 location: model.location,
+                releaseYear: model.releaseYear,
                 latitude: model.latitude ?? 0.0,
                 longitude: model.longitude ?? 0.0,
               ),

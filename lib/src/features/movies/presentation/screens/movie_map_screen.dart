@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../cubit/movie_location_cubit.dart';
 
 class MovieMapScreen extends StatefulWidget {
@@ -9,8 +10,7 @@ class MovieMapScreen extends StatefulWidget {
 }
 
 class _MovieMapScreenState extends State<MovieMapScreen> {
-  late GoogleMapController _mapController;
-  final LatLng _sfCenter = LatLng(37.7749, -122.4194);
+  final LatLng _sfCenter = const LatLng(37.7749, -122.4194);
 
   @override
   void initState() {
@@ -20,38 +20,59 @@ class _MovieMapScreenState extends State<MovieMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('SF Movie Locations')),
-      body: BlocBuilder<MovieLocationCubit, MovieLocationState>(
-        builder: (context, state) {
-          if (state is MovieLocationLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is MovieLocationError) {
-            return Center(
-                child: Text(
-              state.message,
-              style: TextStyle(color: Colors.red, fontSize: 16),
-              textAlign: TextAlign.center,
-            ));
-          } else if (state is MovieLocationLoaded) {
-            Set<Marker> markers = state.locations
-                .map((movie) => Marker(
-                      markerId: MarkerId(movie.title),
-                      position: LatLng(movie.latitude, movie.longitude),
-                      infoWindow: InfoWindow(
-                          title: movie.title, snippet: movie.location),
-                    ))
-                .toSet();
+    final movieCubit = context.read<MovieLocationCubit>();
 
-            return GoogleMap(
-              initialCameraPosition:
-                  CameraPosition(target: _sfCenter, zoom: 12),
-              onMapCreated: (controller) => _mapController = controller,
-              markers: markers,
-            );
-          }
-          return Container();
-        },
+    return Scaffold(
+      appBar: AppBar(title: const Text('SF Movie Locations')),
+      body: Column(
+        children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: movieCubit.searchController,
+              decoration: InputDecoration(
+                hintText: "Search movie locations...",
+                prefixIcon: const Icon(Icons.search),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onChanged: (movie) {
+                movieCubit.filterMovies();
+              },
+            ),
+          ),
+          // Display the map and results
+          Expanded(
+            child: BlocBuilder<MovieLocationCubit, MovieLocationState>(
+              builder: (context, state) {
+                switch (state.runtimeType) {
+                  case MovieLocationLoading:
+                    return const Center(child: CircularProgressIndicator());
+                  case MovieLocationError:
+                    final errorState = state as MovieLocationError;
+                    return Center(
+                      child: Text(
+                        errorState.message,
+                        style: const TextStyle(color: Colors.red, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    );
+                  case MovieLocationLoaded:
+                    final loadedState = state as MovieLocationLoaded;
+                    return GoogleMap(
+                      initialCameraPosition:
+                          CameraPosition(target: _sfCenter, zoom: 12),
+                      onMapCreated: movieCubit.onMapCreated,
+                      markers: loadedState.markers,
+                    );
+                  default:
+                    return Container();
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

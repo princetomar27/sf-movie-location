@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../domain/entities/movie_location.dart';
+
 class MovieLocationModel extends Equatable {
   final String title;
   final String releaseYear;
@@ -14,6 +16,15 @@ class MovieLocationModel extends Equatable {
     required this.latitude,
     required this.longitude,
   });
+  factory MovieLocationModel.fromEntity(MovieLocation movieLocation) {
+    return MovieLocationModel(
+      title: movieLocation.title,
+      releaseYear: movieLocation.releaseYear,
+      location: movieLocation.location,
+      latitude: movieLocation.latitude,
+      longitude: movieLocation.longitude,
+    );
+  }
 
   factory MovieLocationModel.fromJson(Map<String, dynamic> json) {
     return MovieLocationModel(

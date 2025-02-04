@@ -4,7 +4,7 @@ abstract class MovieLocationState extends Equatable {
   const MovieLocationState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class MovieLocationInitial extends MovieLocationState {}
@@ -16,18 +16,23 @@ class MovieLocationError extends MovieLocationState {
   const MovieLocationError({required this.message});
 
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message];
 }
 
 class MovieLocationLoaded extends MovieLocationState {
-  final List<MovieLocation> locations;
+  final List<MovieLocationModel> locations;
+  final Set<Marker> markers;
 
-  const MovieLocationLoaded(this.locations);
+  const MovieLocationLoaded({required this.locations, required this.markers});
 
-  MovieLocationLoaded copyWith({List<MovieLocation>? locations}) {
-    return MovieLocationLoaded(locations ?? this.locations);
+  MovieLocationLoaded copyWith(
+      {List<MovieLocationModel>? locations, Set<Marker>? markers}) {
+    return MovieLocationLoaded(
+      locations: locations ?? this.locations,
+      markers: markers ?? this.markers,
+    );
   }
 
   @override
-  List<Object> get props => [locations];
+  List<Object?> get props => [locations, markers];
 }
