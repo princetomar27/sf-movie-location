@@ -31,11 +31,39 @@ class MovieMapScreen extends StatelessWidget {
                     );
                   case MovieLocationLoaded:
                     final loadedState = state as MovieLocationLoaded;
-                    return GoogleMap(
-                      initialCameraPosition:
-                          CameraPosition(target: _sfCenter, zoom: 12),
-                      onMapCreated: movieLocationCubit.onMapCreated,
-                      markers: loadedState.markers,
+                    return Column(
+                      children: [
+                        TextField(
+                          controller: movieLocationCubit.searchController,
+                          focusNode: movieLocationCubit.focusNode,
+                          decoration: InputDecoration(
+                            hintText: "Search movie locations...",
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                movieLocationCubit.clearSearchField();
+                              },
+                              child: Icon(
+                                Icons.close,
+                                color: movieLocationCubit.suffixIconColor,
+                              ),
+                            ),
+                          ),
+                          onChanged: (movie) {
+                            movieLocationCubit.filterMovies();
+                          },
+                        ),
+                        Expanded(
+                          child: GoogleMap(
+                            initialCameraPosition:
+                                CameraPosition(target: _sfCenter, zoom: 12),
+                            onMapCreated: movieLocationCubit.onMapCreated,
+                            markers: loadedState.markers,
+                          ),
+                        ),
+                      ],
                     );
                   default:
                     return Container();
