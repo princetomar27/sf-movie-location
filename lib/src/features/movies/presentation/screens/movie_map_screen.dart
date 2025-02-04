@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../cubit/movie_location_cubit.dart';
 
 class MovieMapScreen extends StatefulWidget {
@@ -28,7 +27,12 @@ class _MovieMapScreenState extends State<MovieMapScreen> {
           if (state is MovieLocationLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (state is MovieLocationError) {
-            return Center(child: Text(state.message));
+            return Center(
+                child: Text(
+              state.message,
+              style: TextStyle(color: Colors.red, fontSize: 16),
+              textAlign: TextAlign.center,
+            ));
           } else if (state is MovieLocationLoaded) {
             Set<Marker> markers = state.locations
                 .map((movie) => Marker(

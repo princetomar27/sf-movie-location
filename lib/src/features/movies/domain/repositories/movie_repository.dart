@@ -1,5 +1,8 @@
+import 'package:dartz/dartz.dart';
+
+import '../../../../core/errors/failures.dart';
 import '../entities/movie_location.dart';
 
 abstract class MovieRepository {
-  Future<List<MovieLocation>> fetchMovieLocations();
+  Future<Either<Failure, List<MovieLocation>>> fetchMovieLocations();
 }

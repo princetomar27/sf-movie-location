@@ -1,31 +1,33 @@
 part of 'movie_location_cubit.dart';
 
-abstract class MovieLocationState extends Equatable {}
+abstract class MovieLocationState extends Equatable {
+  const MovieLocationState();
 
-class MovieLocationInitial extends MovieLocationState {
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object> get props => [];
 }
 
-class MovieLocationLoading extends MovieLocationState {
+class MovieLocationInitial extends MovieLocationState {}
+
+class MovieLocationLoading extends MovieLocationState {}
+
+class MovieLocationError extends MovieLocationState {
+  final String message;
+  const MovieLocationError({required this.message});
+
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object> get props => [message];
 }
 
 class MovieLocationLoaded extends MovieLocationState {
   final List<MovieLocation> locations;
-  MovieLocationLoaded(this.locations);
+
+  const MovieLocationLoaded(this.locations);
+
+  MovieLocationLoaded copyWith({List<MovieLocation>? locations}) {
+    return MovieLocationLoaded(locations ?? this.locations);
+  }
 
   @override
-  List<Object?> get props => throw UnimplementedError();
-}
-
-class MovieLocationError extends MovieLocationState {
-  final String message;
-  MovieLocationError({
-    required this.message,
-  });
-
-  @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object> get props => [locations];
 }

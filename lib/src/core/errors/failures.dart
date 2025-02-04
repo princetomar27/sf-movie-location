@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
+import '../network/error_message_model.dart';
 
-sealed class Failure extends Equatable {
+/// Base class for handling failures
+abstract class Failure extends Equatable {
   final String message;
 
   const Failure({required this.message});
@@ -9,16 +11,13 @@ sealed class Failure extends Equatable {
   List<Object?> get props => [message];
 }
 
+/// Represents a failure from the server, optionally includes detailed error message
 class ServerFailure extends Failure {
-  const ServerFailure({super.message = 'Internal Server Exception'});
+  final ErrorMessageModel? errorMessageModel;
+
+  const ServerFailure({required String message, this.errorMessageModel})
+      : super(message: message);
+
   @override
-  List<Object?> get props => [message];
-}
-
-class PermissionFailure extends Failure {
-  const PermissionFailure({required super.message});
-}
-
-class UserNotExistFailure extends Failure {
-  const UserNotExistFailure({super.message = 'Invalid credentials'});
+  List<Object?> get props => [message, errorMessageModel];
 }

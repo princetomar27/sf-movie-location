@@ -1,6 +1,7 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/models/movie_location_model.dart';
 import '../../domain/entities/movie_location.dart';
 import '../../domain/repositories/movie_repository.dart';
 
@@ -12,17 +13,22 @@ class MovieLocationCubit extends Cubit<MovieLocationState> {
   MovieLocationCubit(this.repository) : super(MovieLocationInitial());
 
   void fetchMovieLocations() async {
-    try {
-      emit(MovieLocationLoading());
-      final locations = await repository.fetchMovieLocations();
-      emit(MovieLocationLoaded(locations));
-    } catch (e) {
-      emit(
-        MovieLocationError(
-          message: 'Failed to fetch movie locations',
-        ),
-      );
-    }
+    emit(MovieLocationLoading());
+    final locations = await repository.fetchMovieLocations();
+    locations.fold(
+      (failure) {
+        emit(
+          MovieLocationError(
+            message: failure.message,
+          ),
+        );
+      },
+      (filmLocations) {
+        emit(
+          MovieLocationLoaded(filmLocations),
+        );
+      },
+    );
   }
 
   void filterMovies(String query) {
@@ -32,7 +38,8 @@ class MovieLocationCubit extends Cubit<MovieLocationState> {
           .where((movie) =>
               movie.title.toLowerCase().contains(query.toLowerCase()))
           .toList();
-      emit(MovieLocationLoaded(filtered));
+
+      emit(loadedState.copyWith(locations: filtered));
     }
   }
 }
