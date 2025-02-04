@@ -34,5 +34,5 @@ class MovieLocationLoaded extends MovieLocationState {
   }
 
   @override
-  List<Object?> get props => [locations, markers];
+  List<Object> get props => [locations, markers];
 }

@@ -4,48 +4,52 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../cubit/movie_location_cubit.dart';
 
-class MovieMapScreen extends StatefulWidget {
-  @override
-  _MovieMapScreenState createState() => _MovieMapScreenState();
-}
-
-class _MovieMapScreenState extends State<MovieMapScreen> {
+class MovieMapScreen extends StatelessWidget {
   final LatLng _sfCenter = const LatLng(37.7749, -122.4194);
 
   @override
-  void initState() {
-    super.initState();
-    context.read<MovieLocationCubit>().fetchMovieLocations();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final movieCubit = context.read<MovieLocationCubit>();
-
     return Scaffold(
       appBar: AppBar(title: const Text('SF Movie Locations')),
       body: Column(
         children: [
-          // Search Bar
+          // Search bar to filter locations
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: movieCubit.searchController,
-              decoration: InputDecoration(
-                hintText: "Search movie locations...",
-                prefixIcon: const Icon(Icons.search),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              onChanged: (movie) {
-                movieCubit.filterMovies();
+            child: BlocBuilder<MovieLocationCubit, MovieLocationState>(
+              builder: (context, state) {
+                final movieLocationCubit = context.read<MovieLocationCubit>();
+                return TextFormField(
+                  controller: movieLocationCubit.searchController,
+                  focusNode: movieLocationCubit.focusNode,
+                  decoration: InputDecoration(
+                    hintText: "Search movie locations...",
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        movieLocationCubit.clearSearchField();
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: movieLocationCubit.suffixIconColor,
+                      ),
+                    ),
+                  ),
+                  onChanged: (movie) {
+                    movieLocationCubit.filterMovies();
+                  },
+                );
               },
             ),
           ),
-          // Display the map and results
+
+          // Google Map to display locations and markers
           Expanded(
             child: BlocBuilder<MovieLocationCubit, MovieLocationState>(
               builder: (context, state) {
+                final movieLocationCubit = context.read<MovieLocationCubit>();
                 switch (state.runtimeType) {
                   case MovieLocationLoading:
                     return const Center(child: CircularProgressIndicator());
@@ -63,8 +67,11 @@ class _MovieMapScreenState extends State<MovieMapScreen> {
                     return GoogleMap(
                       initialCameraPosition:
                           CameraPosition(target: _sfCenter, zoom: 12),
-                      onMapCreated: movieCubit.onMapCreated,
-                      markers: loadedState.markers,
+                      onMapCreated: movieLocationCubit.onMapCreated,
+                      markers: loadedState.markers, // Display filtered markers
+                      onCameraMove: (position) {
+                        // Optional: Handle camera movement if needed.
+                      },
                     );
                   default:
                     return Container();

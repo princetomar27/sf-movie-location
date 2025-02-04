@@ -6,7 +6,6 @@ import '../../features/movies/data/datasource/movie_remote_data_source.dart';
 import '../../features/movies/data/repositories/movie_repository_impl.dart';
 import '../../features/movies/domain/repositories/movie_repository.dart';
 import '../../features/movies/domain/usecases/get_movie_locations.dart';
-import '../../features/movies/presentation/cubit/movie_location_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -25,9 +24,6 @@ Future<void> setupLocator() async {
 
   // Register Use Case
   registerUseCases();
-
-  // Register Cubit
-  registerCubits();
 }
 
 void registerDataSources() {
@@ -50,14 +46,6 @@ void registerUseCases() {
   sl.registerLazySingleton<GetMovieLocationsUsecase>(
     () => GetMovieLocationsUsecase(
       repository: sl<MovieRepository>(),
-    ),
-  );
-}
-
-void registerCubits() {
-  sl.registerFactory(
-    () => MovieLocationCubit(
-      sl(),
     ),
   );
 }
