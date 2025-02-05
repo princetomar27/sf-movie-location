@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:sfmovie/src/core/errors/failures.dart';
 
-import '../repositories/movie_repository.dart';
+import '../../../../core/errors/failures.dart';
 import '../entities/movie_location.dart';
+import '../repositories/movie_repository.dart';
 
 class GetMovieLocationsUsecase {
   final MovieRepository repository;
