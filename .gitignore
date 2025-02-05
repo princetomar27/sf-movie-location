@@ -43,8 +43,14 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Firebase options file
 /lib/firebase_options.dart
+
+# Environment variables file
 .env
 
+# iOS build files
 ./ios/Runner/
+
+# macOS build files
 ./macos/Runner/
