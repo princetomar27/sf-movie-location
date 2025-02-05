@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -104,17 +105,35 @@ class MovieLocationCubit extends Cubit<MovieLocationState> {
   }
 
   Set<Marker> _generateMarkers(List<MovieLocation> locations) {
-    return locations.map((movie) {
-      return Marker(
-        markerId: MarkerId(movie.title +
-            movie.latitude.toString() +
-            movie.longitude.toString()),
-        position: LatLng(movie.latitude, movie.longitude),
-        onTap: () {
-          _showMovieInfoWindows(movie);
-        },
-      );
-    }).toSet();
+    if (kIsWeb) {
+      return locations.map((movie) {
+        return Marker(
+          markerId: MarkerId(movie.title +
+              movie.latitude.toString() +
+              movie.longitude.toString()),
+          position: LatLng(movie.latitude, movie.longitude),
+          onTap: () {
+            _showMovieInfoWindows(movie);
+          },
+          infoWindow: InfoWindow(
+            title: movie.title,
+            snippet: "Year: ${movie.releaseYear}\nLocation: ${movie.location}",
+          ),
+        );
+      }).toSet();
+    } else {
+      return locations.map((movie) {
+        return Marker(
+          markerId: MarkerId(movie.title +
+              movie.latitude.toString() +
+              movie.longitude.toString()),
+          position: LatLng(movie.latitude, movie.longitude),
+          onTap: () {
+            _showMovieInfoWindows(movie);
+          },
+        );
+      }).toSet();
+    }
   }
 
   void _updateMarkers(List<MovieLocation> locations) {
