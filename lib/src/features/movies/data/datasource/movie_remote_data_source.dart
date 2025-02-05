@@ -1,10 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:sfmovie/src/core/errors/failures.dart';
-import 'package:sfmovie/src/core/network/error_message_model.dart';
-import '../../../../core/network/dio_errors_messages.dart';
-import '../models/movie_location_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../../../../core/errors/failures.dart';
+import '../../../../core/network/dio_errors_messages.dart';
+import '../../../../core/network/error_message_model.dart';
+import '../models/movie_location_model.dart';
 
 class MovieRemoteDataSource {
   final Dio dio;
