@@ -13,13 +13,15 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => MovieLocationCubit(
         sl(),
       )..fetchMovieLocations(),
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'SF Movie Locations',
         home: MovieMapScreen(),

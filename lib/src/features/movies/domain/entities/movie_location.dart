@@ -1,15 +1,23 @@
 class MovieLocation {
   final String title;
-  final String location;
+  final String? location;
   final double latitude;
   final double longitude;
   final String releaseYear;
+  final String? productionCompany;
+  final String? director;
+  final String? writer;
+  final List<String>? actors;
 
   MovieLocation({
     required this.title,
-    required this.location,
+    required this.releaseYear,
+    this.location,
     required this.latitude,
     required this.longitude,
-    required this.releaseYear,
+    this.productionCompany,
+    this.director,
+    this.writer,
+    this.actors,
   });
 }
