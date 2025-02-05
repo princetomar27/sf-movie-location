@@ -97,11 +97,12 @@ class MovieLocationCubit extends Cubit<MovieLocationState> {
     emit(loadedState.copyWith(markers: markersToShow));
     _moveToLocation(
         sameMovieLocations.first.latitude, sameMovieLocations.first.longitude);
-
-    customInfoWindowController.addInfoWindow!(
-      MovieDescriptionWidget(movie: tappedMovie),
-      LatLng(tappedMovie.latitude, tappedMovie.longitude),
-    );
+    if (!kIsWeb) {
+      customInfoWindowController.addInfoWindow!(
+        MovieDescriptionWidget(movie: tappedMovie),
+        LatLng(tappedMovie.latitude, tappedMovie.longitude),
+      );
+    }
   }
 
   Set<Marker> _generateMarkers(List<MovieLocation> locations) {

@@ -46,5 +46,3 @@ class MovieLocationLoaded extends MovieLocationState {
   @override
   List<Object> get props => [locations, markers, allLocations];
 }
-
-// ... (ShowMovieInfoWindow state removed as it's not needed)
