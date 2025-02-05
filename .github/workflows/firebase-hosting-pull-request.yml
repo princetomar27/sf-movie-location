@@ -17,6 +17,7 @@ jobs:
       - uses: actions/setup-java@v2 # Updated to the latest stable version
         with:
           java-version: "12.x"
+          distribution: "adoptopenjdk" # Specify the Java distribution (you can also use 'zulu' or 'openjdk')
       - uses: subosito/flutter-action@v2 # Updated to the latest stable version
       - name: "Run flutter pub get"
         run: flutter pub get
