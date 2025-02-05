@@ -20,13 +20,15 @@ class MovieLocationError extends MovieLocationState {
 }
 
 class MovieLocationLoaded extends MovieLocationState {
-  final List<MovieLocationModel> locations;
+  final List<MovieLocation> locations; // Use Entity instead of Model
   final Set<Marker> markers;
 
   const MovieLocationLoaded({required this.locations, required this.markers});
 
-  MovieLocationLoaded copyWith(
-      {List<MovieLocationModel>? locations, Set<Marker>? markers}) {
+  MovieLocationLoaded copyWith({
+    List<MovieLocation>? locations,
+    Set<Marker>? markers,
+  }) {
     return MovieLocationLoaded(
       locations: locations ?? this.locations,
       markers: markers ?? this.markers,
@@ -35,4 +37,19 @@ class MovieLocationLoaded extends MovieLocationState {
 
   @override
   List<Object> get props => [locations, markers];
+}
+
+class ShowMovieInfoWindow extends MovieLocationState {
+  final MovieLocation movie;
+  final List<MovieLocation> locations;
+  final Set<Marker> markers;
+
+  const ShowMovieInfoWindow({
+    required this.movie,
+    required this.locations,
+    required this.markers,
+  });
+
+  @override
+  List<Object> get props => [movie, locations, markers];
 }

@@ -1,19 +1,23 @@
 import 'dart:async';
 
+import 'package:custom_info_window/custom_info_window.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../core/colors/app_colors.dart';
-import '../../data/models/movie_location_model.dart';
+import '../../domain/entities/movie_location.dart';
 import '../../domain/repositories/movie_repository.dart';
+import '../widgets/movie_description_widget.dart';
 
 part 'movie_location_state.dart';
 
 class MovieLocationCubit extends Cubit<MovieLocationState> {
   final MovieRepository repository;
   late GoogleMapController _mapController;
+  final CustomInfoWindowController customInfoWindowController =
+      CustomInfoWindowController();
 
   MovieLocationCubit(this.repository) : super(MovieLocationInitial()) {
     addSearchListener();
@@ -37,12 +41,13 @@ class MovieLocationCubit extends Cubit<MovieLocationState> {
       const Duration(milliseconds: 500),
       () {
         if (!isSearchEmpty) {
-          filterMovies(); // Trigger filterMovies after debounce
+          filterMovies();
         }
       },
     );
   }
 
+  /// Fetch movie locations from repository
   void fetchMovieLocations() async {
     emit(MovieLocationLoading());
     final locations = await repository.fetchMovieLocations();
@@ -51,83 +56,65 @@ class MovieLocationCubit extends Cubit<MovieLocationState> {
         emit(MovieLocationError(message: failure.message));
       },
       (filmLocations) {
-        _updateMarkers(
-          filmLocations
-              .map(
-                  (filmLocation) => MovieLocationModel.fromEntity(filmLocation))
-              .toList(),
-        );
+        _updateMarkers(filmLocations);
       },
     );
   }
 
+  /// Filter movies based on search query
   void filterMovies() {
     if (state is MovieLocationLoaded) {
       final loadedState = state as MovieLocationLoaded;
 
-      // Perform the filtering if there's a search term
       final filtered = loadedState.locations
           .where((movie) => movie.title
               .toLowerCase()
               .contains(searchController.text.toLowerCase()))
           .toList();
 
-      final markers = filtered
-          .map(
-            (movie) => Marker(
-              markerId: MarkerId(movie.title),
-              position: LatLng(
-                movie.latitude ?? 0.0,
-                movie.longitude ?? 0.0,
-              ),
-              infoWindow:
-                  InfoWindow(title: movie.title, snippet: movie.location),
-              onTap: () => _moveToLocation(
-                  movie.latitude ?? 0.0, movie.longitude ?? 0.0),
-            ),
-          )
-          .toSet();
+      final markers = _generateMarkers(filtered);
 
-      // Update the state with filtered results
       emit(loadedState.copyWith(
         locations: filtered,
         markers: markers,
       ));
 
-      // Move camera to the first result in the filtered list
       if (filtered.isNotEmpty) {
-        _moveToLocation(
-            filtered[0].latitude ?? 0.0, filtered[0].longitude ?? 0.0);
+        _moveToLocation(filtered[0].latitude, filtered[0].longitude);
       }
     }
   }
 
-  void _updateMarkers(List<MovieLocationModel> locations) {
-    final markers = locations
-        .map(
-          (movie) => Marker(
-            markerId: MarkerId(movie.title),
-            position: LatLng(
-              movie.latitude ?? 0.0,
-              movie.longitude ?? 0.0,
-            ),
-            infoWindow: InfoWindow(title: movie.title, snippet: movie.location),
-            onTap: () =>
-                _moveToLocation(movie.latitude ?? 0.0, movie.longitude ?? 0.0),
-          ),
-        )
-        .toSet();
+  /// Generate Google Map markers for movie locations
+  Set<Marker> _generateMarkers(List<MovieLocation> locations) {
+    return locations.map((movie) {
+      return Marker(
+        markerId: MarkerId(movie.title),
+        position: LatLng(movie.latitude, movie.longitude),
+        onTap: () {
+          _moveToLocation(movie.latitude, movie.longitude);
+          customInfoWindowController.addInfoWindow!(
+            MovieDescriptionWidget(movie: movie),
+            LatLng(movie.latitude, movie.longitude),
+          );
+        },
+      );
+    }).toSet();
+  }
 
+  /// Update map markers
+  void _updateMarkers(List<MovieLocation> locations) {
+    final markers = _generateMarkers(locations);
     emit(MovieLocationLoaded(locations: locations, markers: markers));
   }
 
   void onMapCreated(GoogleMapController controller) {
     _mapController = controller;
+    customInfoWindowController.googleMapController = controller;
   }
 
   void clearSearchField() {
     searchController.clear();
-
     fetchMovieLocations();
   }
 
@@ -139,6 +126,7 @@ class MovieLocationCubit extends Cubit<MovieLocationState> {
   Future<void> close() {
     searchController.dispose();
     focusNode.dispose();
+    customInfoWindowController.dispose();
     return super.close();
   }
 }
