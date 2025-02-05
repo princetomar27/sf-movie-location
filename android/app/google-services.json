@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "509219125212",
+    "project_id": "sf-movie-app",
+    "storage_bucket": "sf-movie-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509219125212:android:b5e101f58ac4f7cbeac119",
+        "android_client_info": {
+          "package_name": "com.example.sfmovie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF-3HCO1GTAJ3KVvTYkO4ISS1VswFA0Lo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,52 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "sf-movie-app",
+          "appId": "1:509219125212:android:b5e101f58ac4f7cbeac119",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "sf-movie-app",
+          "appId": "1:509219125212:ios:77b850bd581d02c0eac119",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "sf-movie-app",
+          "appId": "1:509219125212:ios:77b850bd581d02c0eac119",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "sf-movie-app",
+          "configurations": {
+            "android": "1:509219125212:android:b5e101f58ac4f7cbeac119",
+            "ios": "1:509219125212:ios:77b850bd581d02c0eac119",
+            "macos": "1:509219125212:ios:77b850bd581d02c0eac119",
+            "web": "1:509219125212:web:a38588e63aa081aaeac119",
+            "windows": "1:509219125212:web:6215d40509519f48eac119"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "site": "sf-movie-app",
+    "public": "build/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
